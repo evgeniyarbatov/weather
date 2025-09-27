@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .controls {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 0 5px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .loading {
+            text-align: center;
+            color: #666;
+            margin: 20px 0;
+        }
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        .weather-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .weather-card {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #007bff;
+        }
+        .weather-card h3 {
+            margin: 0 0 10px 0;
+            color: #333;
+        }
+        .weather-data {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+        .data-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 5px 0;
+        }
+        .data-label {
+            font-weight: bold;
+            color: #555;
+        }
+        .data-value {
+            color: #333;
+        }
+        .timestamp {
+            color: #666;
+            font-size: 0.9em;
+            margin-top: 10px;
+            text-align: right;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🌤️ Weather Dashboard</h1>
+        
+        <div class="controls">
+            <button onclick="loadWeatherData()">Refresh Data</button>
+            <button onclick="loadLastHour()">Last Hour</button>
+            <button onclick="loadLast24Hours()">Last 24 Hours</button>
+        </div>
+
+        <div id="loading" class="loading" style="display: none;">
+            Loading weather data...
+        </div>
+
+        <div id="error" class="error" style="display: none;"></div>
+
+        <div id="weatherContainer" class="weather-grid">
+            <!-- Weather data will be populated here -->
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/aws-sdk/2.1046.0/aws-sdk.min.js"></script>
+    <script>
+        // AWS Configuration - These variables will be replaced by Terraform
+        const AWS_REGION = '${aws_region}';
+        const DYNAMODB_TABLE = '${table_name}';
+        const COGNITO_IDENTITY_POOL_ID = '${cognito_identity_pool_id}';
+        
+        // Configure AWS SDK
+        AWS.config.update({
+            region: AWS_REGION,
+            credentials: new AWS.CognitoIdentityCredentials({
+                IdentityPoolId: COGNITO_IDENTITY_POOL_ID
+            })
+        });
+
+        const dynamodb = new AWS.DynamoDB.DocumentClient();
+
+        function showLoading() {
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('error').style.display = 'none';
+            document.getElementById('weatherContainer').innerHTML = '';
+        }
+
+        function hideLoading() {
+            document.getElementById('loading').style.display = 'none';
+        }
+
+        function showError(message) {
+            const errorDiv = document.getElementById('error');
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+        }
+
+        function formatDateTime(isoString) {
+            const date = new Date(isoString);
+            return date.toLocaleString();
+        }
+
+        function formatTime(isoString) {
+            if (!isoString) return 'N/A';
+            const date = new Date(isoString);
+            return date.toLocaleTimeString();
+        }
+
+        function createWeatherCard(item) {
+            const card = document.createElement('div');
+            card.className = 'weather-card';
+            
+            card.innerHTML = `
+                <h3>Weather Reading</h3>
+                <div class="weather-data">
+                    <div class="data-item">
+                        <span class="data-label">Temperature:</span>
+                        <span class="data-value">$${item.temp}°C</span>
+                    </div>
+                    <div class="data-item">
+                        <span class="data-label">Feels Like:</span>
+                        <span class="data-value">$${item.feels_like}°C</span>
+                    </div>
+                    <div class="data-item">
+                        <span class="data-label">Cloud Cover:</span>
+                        <span class="data-value">$${item.clouds}%</span>
+                    </div>
+                    <div class="data-item">
+                        <span class="data-label">Wind Speed:</span>
+                        <span class="data-value">$${item.wind_speed} m/s</span>
+                    </div>
+                    <div class="data-item">
+                        <span class="data-label">Wind Direction:</span>
+                        <span class="data-value">$${item.wind_deg}°</span>
+                    </div>
+                    <div class="data-item">
+                        <span class="data-label">Sunrise:</span>
+                        <span class="data-value">$${formatTime(item.sunrise)}</span>
+                    </div>
+                    <div class="data-item">
+                        <span class="data-label">Sunset:</span>
+                        <span class="data-value">$${formatTime(item.sunset)}</span>
+                    </div>
+                    <div class="data-item">
+                        <span class="data-label">Hour of Day:</span>
+                        <span class="data-value">$${item.hour_of_day}</span>
+                    </div>
+                </div>
+                <div class="timestamp">$${formatDateTime(item.timestamp)}</div>
+            `;
+            
+            return card;
+        }
+
+        function displayWeatherData(items) {
+            const container = document.getElementById('weatherContainer');
+            container.innerHTML = '';
+
+            if (items.length === 0) {
+                container.innerHTML = '<p style="text-align: center; color: #666;">No weather data found.</p>';
+                return;
+            }
+
+            // Sort by timestamp (most recent first)
+            items.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+
+            items.forEach(item => {
+                container.appendChild(createWeatherCard(item));
+            });
+        }
+
+        function loadWeatherData(hours = 24) {
+            showLoading();
+            
+            // Calculate timestamp for filtering (last N hours)
+            const now = new Date();
+            const hoursAgo = new Date(now.getTime() - (hours * 60 * 60 * 1000));
+            
+            const params = {
+                TableName: DYNAMODB_TABLE,
+                FilterExpression: '#ts >= :timestamp',
+                ExpressionAttributeNames: {
+                    '#ts': 'timestamp'
+                },
+                ExpressionAttributeValues: {
+                    ':timestamp': hoursAgo.toISOString()
+                }
+            };
+
+            dynamodb.scan(params, function(err, data) {
+                hideLoading();
+                
+                if (err) {
+                    console.error('Error loading weather data:', err);
+                    showError('Failed to load weather data: ' + err.message);
+                } else {
+                    displayWeatherData(data.Items);
+                }
+            });
+        }
+
+        function loadLastHour() {
+            loadWeatherData(1);
+        }
+
+        function loadLast24Hours() {
+            loadWeatherData(24);
+        }
+
+        // Load initial data when page loads
+        window.addEventListener('load', function() {
+            loadLast24Hours();
+        });
+    </script>
+</body>
+</html>
