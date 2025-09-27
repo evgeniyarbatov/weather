@@ -54,7 +54,7 @@ resource "aws_iam_role_policy" "unauthenticated_dynamodb_read" {
         Action   = [
           "dynamodb:Scan",        # or "dynamodb:GetItem", etc. depending on what you need
         ]
-        Resource = "arn:aws:dynamodb:ap-southeast-1:${data.aws_caller_identity.current.account_id}:table/sapa-weather-data"
+        Resource = aws_dynamodb_table.weather_data.arn
       }
     ]
   })
