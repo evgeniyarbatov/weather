@@ -10,7 +10,7 @@ init:
 	cd $(TERRAFORM_DIR) && rm -rf .terraform
 	cd $(TERRAFORM_DIR) && rm -rf .terraform*
 	cd $(TERRAFORM_DIR) && rm -rf *.zip
-	cd $(TERRAFORM_DIR) && terraform init
+	cd $(TERRAFORM_DIR) && terraform init -upgrade
 
 deploy:
 	cd $(SITE_DIR) && npm run build
