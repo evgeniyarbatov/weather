@@ -1,1 +1,2 @@
 - I need an easy way to setup other cities to monitor
+- Update site/.env based on Terraform output
