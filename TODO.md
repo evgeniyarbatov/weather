@@ -1,0 +1,1 @@
+- I need an easy way to setup other cities to monitor
