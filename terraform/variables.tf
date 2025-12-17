@@ -4,10 +4,15 @@ variable "aws_region" {
   default     = "ap-southeast-1"
 }
 
-variable "s3_bucket_name" {
+variable "s3_bucket" {
   description = "Name of S3 bucket"
   type        = string
   default     = "weather.gritcuriosityandperseverance.org"
+}
+
+variable "s3_bucket_dir" {
+  type    = string
+  default = "../site/dist"
 }
 
 variable "function_name" {
