@@ -50,9 +50,9 @@ resource "aws_iam_role_policy" "unauthenticated_dynamodb_read" {
     Version = "2012-10-17"
     Statement = [
       {
-        Effect   = "Allow"
-        Action   = [
-          "dynamodb:Scan",        # or "dynamodb:GetItem", etc. depending on what you need
+        Effect = "Allow"
+        Action = [
+          "dynamodb:Scan", # or "dynamodb:GetItem", etc. depending on what you need
         ]
         Resource = aws_dynamodb_table.weather_data.arn
       }
