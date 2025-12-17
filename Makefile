@@ -8,4 +8,4 @@ run:
 
 deploy:
 	cd $(SITE_DIR) && npm run build
-	cd $(TERRAFORM_DIR) && terraform apply
+	cd $(TERRAFORM_DIR) && terraform apply -auto-approve
