@@ -89,3 +89,11 @@ resource "cloudflare_dns_record" "sapa-weather" {
   ttl     = 1
 }
 ```
+
+Update site/.env
+
+```
+VITE_AWS_REGION=ap-southeast-1
+VITE_TABLE_NAME=sapa-weather-data
+VITE_COGNITO_IDENTITY_POOL_ID=ap-southeast-1:2fce7c60-6c42-47da-aa01-a1a54734333a
+```

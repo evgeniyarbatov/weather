@@ -13,4 +13,4 @@ init:
 
 deploy:
 	cd $(SITE_DIR) && npm run build
-	cd $(TERRAFORM_DIR) && terraform apply -auto-approve
+	cd $(TERRAFORM_DIR) && terraform apply -auto-approve -lock=false

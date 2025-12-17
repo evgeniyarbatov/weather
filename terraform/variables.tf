@@ -18,7 +18,7 @@ variable "s3_bucket_dir" {
 variable "function_name" {
   description = "Name of the Lambda function"
   type        = string
-  default     = "sapa-data-collector"
+  default     = "sapa-weather-data-collector"
 }
 
 variable "table_name" {
