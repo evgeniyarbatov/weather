@@ -76,3 +76,16 @@ index dd213c8..959b844 100644
  }
 \ No newline at end of file
 ```
+
+Update CDN:
+
+```
+resource "cloudflare_dns_record" "sapa-weather" {
+  zone_id = var.zone_id
+  name    = "sapa-weather"
+  content = "sapa-weather.gritcuriosityandperseverance.org.s3-website-ap-southeast-1.amazonaws.com"
+  type    = "CNAME"
+  proxied = true
+  ttl     = 1
+}
+```
