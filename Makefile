@@ -1,9 +1,10 @@
 SITE_DIR = site
 TERRAFORM_DIR = terraform
+PYTHON = python3
 
 all: deploy
 
-run: 
+run:
 	cd $(SITE_DIR) && npm run dev
 
 deploy:

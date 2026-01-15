@@ -14,8 +14,8 @@ function App() {
 
   const headerLabels = {
     timestamp: "Time",
-    temp: "Temperature",
-    clouds: "Clouds",
+    main_temp: "Temperature",
+    clouds_all: "Clouds",
   };
 
   useEffect(() => {
@@ -73,9 +73,8 @@ function App() {
     return value
   }
 
-  // Get temp field
-  const tempField = items.length > 0 ? Object.keys(items[0]).find(f => f.toLowerCase().includes('temp')) : null
-  const temps = tempField ? items.map(i => Number(i[tempField])) : []
+  const tempField = "main_temp"
+  const temps = items.map(i => Number(i[tempField]))
   const minTemp = Math.min(...temps)
   const maxTemp = Math.max(...temps)
 
@@ -98,7 +97,7 @@ function App() {
   if (items.length === 0) return <div>No data</div>
 
   const timestampField = Object.keys(items[0]).find(f => f.toLowerCase().includes('timestamp'))
-  const cloudsField = Object.keys(items[0]).find(f => f.toLowerCase().includes('cloud'))
+  const cloudsField = "clouds_all"
   const orderedFields = [timestampField, tempField, cloudsField].filter(Boolean)
 
   return (
