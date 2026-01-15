@@ -12,12 +12,6 @@ function App() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
 
-  const headerLabels = {
-    timestamp: "Time",
-    main_temp: "Temperature",
-    clouds_all: "Clouds",
-  }
-
   const fieldLabels = {
     timestamp: "Time",
     dt: "Unix Time",
@@ -32,7 +26,7 @@ function App() {
     weather_0_main: "Weather",
     weather_0_description: "Description",
     weather_0_icon: "Icon",
-    main_temp: "Temp",
+    main_temp: "Temperature",
     main_feels_like: "Feels Like",
     main_temp_min: "Min Temp",
     main_temp_max: "Max Temp",
@@ -143,9 +137,6 @@ function App() {
   if (items.length === 0) return <div>No data</div>
 
   const timestampField = Object.keys(items[0]).find(f => f.toLowerCase().includes('timestamp'))
-  const tempField = "main_temp"
-  const cloudsField = "clouds_all"
-  const orderedFields = [timestampField, tempField, cloudsField].filter(Boolean)
   const availableFields = new Set(Object.keys(items[0] || {}))
   const timeField = timestampField || "timestamp"
 
@@ -190,6 +181,14 @@ function App() {
 
   const metricTables = [
     {
+      title: "Temperature",
+      fields: ["main_temp", "main_feels_like"],
+    },
+    {
+      title: "Clouds",
+      fields: ["clouds_all"],
+    },
+    {
       title: "Wind",
       fields: ["wind_speed", "wind_gust", "wind_deg"],
     },
@@ -221,53 +220,6 @@ function App() {
   return (
     <div style={{ minHeight: "100vh", padding: "32px 20px", background: "#fff" }}>
       <div style={{ maxWidth: "980px", margin: "0 auto", display: "grid", gap: "24px" }}>
-        <div className="d-flex justify-content-center" style={{ width: "100%" }}>
-          <table className="table text-center" style={{ borderCollapse: "collapse", background: "#fff", width: "100%", fontSize: "13px" }}>
-            <thead>
-              <tr>
-                {orderedFields.map((field) => (
-                  <th
-                    key={field}
-                    style={{
-                      border: "none",
-                      padding: "12px 16px",
-                      fontWeight: "600",
-                      background: "transparent",
-                      color: "#333",
-                      fontSize: "13px",
-                      width: field === timeField ? "140px" : "auto",
-                    }}
-                  >
-                    {headerLabels[field]}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {items.map((item, idx) => (
-                <tr key={idx}>
-                  {orderedFields.map((field) => (
-                    <td
-                      key={field}
-                      style={{
-                        border: "none",
-                        padding: "10px 14px",
-                        backgroundColor: getFieldColor(field, item[field]),
-                        color: "#333",
-                        fontWeight: field === tempField ? "500" : "400",
-                        width: field === timeField ? "140px" : "auto",
-                      }}
-                    >
-                      {field === timestampField
-                        ? formatSummaryTime(item[field])
-                        : formatValue(field, item[field])}
-                    </td>
-                  ))}
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
         <div>
           <div style={{ maxHeight: "70vh", overflowY: "auto" }}>
             {metricTables.map((table) => (
