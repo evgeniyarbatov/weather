@@ -63,7 +63,7 @@ function App() {
   const metricTables = buildMetricTables(availableFields)
 
   return (
-    <div style={{ minHeight: "100vh", padding: "32px 20px", background: "#fff", boxSizing: "border-box" }}>
+    <div style={{ minHeight: "100vh", padding: "32px 20px", background: "var(--page-bg)", boxSizing: "border-box" }}>
       <div style={{ maxWidth: "980px", margin: "0 auto", display: "grid", gap: "24px" }}>
         <div>
           <div>
@@ -71,7 +71,7 @@ function App() {
               <div key={table.title} className="d-flex justify-content-center" style={{ width: "100%" }}>
                 <table
                   className="table text-center"
-                  style={{ borderCollapse: "collapse", marginBottom: "20px", background: "#fff", width: "100%", fontSize: "13px" }}
+                  style={{ borderCollapse: "collapse", marginBottom: "20px", background: "var(--surface)", width: "100%", fontSize: "13px" }}
                 >
                   <thead>
                     <tr>
@@ -80,7 +80,7 @@ function App() {
                         border: "none",
                         padding: "8px 12px",
                         fontWeight: "600",
-                        color: "#333",
+                        color: "var(--text)",
                         textAlign: "center",
                         fontSize: "13px",
                         width: "140px",
@@ -95,7 +95,7 @@ function App() {
                             border: "none",
                             padding: "8px 12px",
                             fontWeight: "600",
-                            color: "#333",
+                            color: "var(--text)",
                             textAlign: "center",
                             fontSize: "13px",
                           }}
@@ -112,7 +112,7 @@ function App() {
                         style={{
                           border: "none",
                           padding: "8px 12px",
-                          color: "#333",
+                          color: "var(--text)",
                           fontSize: "13px",
                           width: "140px",
                         }}
@@ -125,7 +125,7 @@ function App() {
                             style={{
                               border: "none",
                               padding: "8px 12px",
-                              color: "#333",
+                              color: "var(--text)",
                               fontSize: "13px",
                               backgroundColor: getFieldColor(field, item[field], fieldRanges),
                             }}

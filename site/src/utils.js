@@ -144,14 +144,25 @@ export const getFieldColor = (field, value, fieldRanges) => {
   if (Number.isNaN(numberValue)) return "transparent"
   const range = fieldRanges[field]
   if (!range) return "transparent"
+  const isDarkMode =
+    typeof window !== "undefined" &&
+    window.matchMedia &&
+    window.matchMedia("(prefers-color-scheme: dark)").matches
   const ratio =
     range.max === range.min
       ? 0.5
       : (numberValue - range.min) / (range.max - range.min)
-  const r = Math.round(246 * (1 - ratio) + 255 * ratio)
-  const g = Math.round(248 * (1 - ratio) + 232 * ratio)
-  const b = Math.round(255 * (1 - ratio) + 210 * ratio)
-  return `rgba(${r}, ${g}, ${b}, 0.6)`
+  const start = isDarkMode
+    ? { r: 32, g: 44, b: 72 }
+    : { r: 246, g: 248, b: 255 }
+  const end = isDarkMode
+    ? { r: 128, g: 64, b: 36 }
+    : { r: 255, g: 232, b: 210 }
+  const r = Math.round(start.r * (1 - ratio) + end.r * ratio)
+  const g = Math.round(start.g * (1 - ratio) + end.g * ratio)
+  const b = Math.round(start.b * (1 - ratio) + end.b * ratio)
+  const alpha = isDarkMode ? 0.95 : 0.6
+  return `rgba(${r}, ${g}, ${b}, ${alpha})`
 }
 
 export const buildMetricTables = (availableFields) =>

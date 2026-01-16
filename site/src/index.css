@@ -1,0 +1,26 @@
+:root {
+  color-scheme: light dark;
+  --page-bg: #ffffff;
+  --surface: #ffffff;
+  --text: #333333;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --page-bg: #0f1115;
+    --surface: #0f1115;
+    --text: #e6e9ef;
+  }
+}
+
+body {
+  margin: 0;
+  background: var(--page-bg);
+  color: var(--text);
+}
+
+.table {
+  --bs-table-bg: var(--surface);
+  --bs-table-color: var(--text);
+  color: var(--text);
+}
