@@ -83,7 +83,8 @@ function App() {
                         color: "var(--text)",
                         textAlign: "center",
                         fontSize: "13px",
-                        width: "140px",
+                        width: "var(--time-col-width)",
+                        whiteSpace: "nowrap",
                       }}
                     >
                       {labelForField(timeField)}
@@ -114,7 +115,8 @@ function App() {
                           padding: "8px 12px",
                           color: "var(--text)",
                           fontSize: "13px",
-                          width: "140px",
+                          width: "var(--time-col-width)",
+                          whiteSpace: "nowrap",
                         }}
                       >
                         {formatSummaryTime(item[timeField])}
