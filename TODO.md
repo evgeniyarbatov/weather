@@ -1,1 +1,3 @@
-- I need an easy way to setup other cities to monitor
+- [ ] I need an easy way to setup other cities to monitor
+- [ ] Add tests
+- [ ] Add SEO tags
