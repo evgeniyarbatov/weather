@@ -9,7 +9,6 @@ export const fieldLabels = {
   sys_country: "Country",
   coord_lat: "Lat",
   coord_lon: "Lon",
-  weather_0_main: "Weather",
   weather_0_description: "Description",
   weather_0_icon: "Icon",
   main_temp: "Temperature",
@@ -59,6 +58,15 @@ export const formatSummaryTime = (value) => {
 
 export const formatValue = (key, value) => {
   if (value === null || value === undefined) return ""
+
+  if (key === "weather_0_description" && typeof value === "string") {
+    return value
+      ? value
+          .split(" ")
+          .map((word) => (word ? word[0].toUpperCase() + word.slice(1) : word))
+          .join(" ")
+      : value
+  }
 
   const lowerKey = key.toLowerCase()
   const numberValue = typeof value === "number" ? value : Number(value)
@@ -172,7 +180,7 @@ export const buildMetricTables = (availableFields) =>
     { title: "Wind", fields: ["wind_speed", "wind_gust", "wind_deg"] },
     { title: "Pressure", fields: ["main_pressure", "main_sea_level"] },
     { title: "Humidity", fields: ["main_humidity"] },
-    { title: "Weather", fields: ["weather_0_main"] },
+    { title: "Weather", fields: ["weather_0_description"] },
   ]
     .map((table) => ({
       ...table,

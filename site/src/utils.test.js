@@ -37,6 +37,10 @@ test("formatValue formats numeric fields", () => {
   assert.equal(formatValue("coord_lat", 12.34567), "12.3457")
   assert.equal(formatValue("wind_deg", 270), "270°")
   assert.equal(formatValue("main_pressure", 1012), "1012 hPa")
+  assert.equal(
+    formatValue("weather_0_description", "clear sky"),
+    "Clear Sky"
+  )
 })
 
 test("formatValue returns empty string for nullish values", () => {
@@ -79,14 +83,14 @@ test("getFieldColor returns scaled colors", () => {
 
 test("buildMetricTables filters unavailable fields", () => {
   const tables = buildMetricTables(
-    new Set(["main_temp", "wind_speed", "weather_0_main"])
+    new Set(["main_temp", "wind_speed", "weather_0_description"])
   )
   const temperature = tables.find((table) => table.title === "Temperature")
   const wind = tables.find((table) => table.title === "Wind")
   const weather = tables.find((table) => table.title === "Weather")
   assert.deepEqual(temperature.fields, ["main_temp"])
   assert.deepEqual(wind.fields, ["wind_speed"])
-  assert.deepEqual(weather.fields, ["weather_0_main"])
+  assert.deepEqual(weather.fields, ["weather_0_description"])
 })
 
 test("labelForField uses friendly labels", () => {
