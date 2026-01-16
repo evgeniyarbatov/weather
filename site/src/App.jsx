@@ -103,9 +103,11 @@ function App() {
     }
 
     if (!Number.isNaN(numberValue)) {
-      if (lowerKey.includes("temp")) return `${numberValue}°C`
+      if (lowerKey.includes("temp") || lowerKey.includes("feels_like")) return `${numberValue}°C`
       if (lowerKey.includes("humidity") || lowerKey.includes("cloud")) return `${numberValue}%`
-      if (lowerKey.includes("pressure")) return `${numberValue} hPa`
+      if (lowerKey.includes("pressure") || lowerKey.includes("sea_level") || lowerKey.includes("grnd_level")) {
+        return `${numberValue} hPa`
+      }
       if (lowerKey.includes("wind_speed") || lowerKey.includes("wind_gust")) return `${numberValue} m/s`
       if (lowerKey.includes("wind_deg")) return `${numberValue}°`
       if (lowerKey.includes("visibility")) return `${numberValue} m`
@@ -194,15 +196,15 @@ function App() {
     },
     {
       title: "Pressure",
-      fields: ["main_pressure", "main_sea_level", "main_grnd_level"],
+      fields: ["main_pressure", "main_sea_level"],
     },
     {
       title: "Humidity",
       fields: ["main_humidity"],
     },
     {
-      title: "Visibility",
-      fields: ["visibility"],
+      title: "Weather",
+      fields: ["weather_0_main"],
     },
   ]
     .map(table => ({
