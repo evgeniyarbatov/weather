@@ -153,15 +153,15 @@ export const getFieldColor = (field, value, fieldRanges) => {
       ? 0.5
       : (numberValue - range.min) / (range.max - range.min)
   const start = isDarkMode
-    ? { r: 32, g: 44, b: 72 }
+    ? { r: 58, g: 70, b: 96 }
     : { r: 246, g: 248, b: 255 }
   const end = isDarkMode
-    ? { r: 128, g: 64, b: 36 }
+    ? { r: 156, g: 110, b: 92 }
     : { r: 255, g: 232, b: 210 }
   const r = Math.round(start.r * (1 - ratio) + end.r * ratio)
   const g = Math.round(start.g * (1 - ratio) + end.g * ratio)
   const b = Math.round(start.b * (1 - ratio) + end.b * ratio)
-  const alpha = isDarkMode ? 0.95 : 0.6
+  const alpha = isDarkMode ? 0.9 : 0.6
   return `rgba(${r}, ${g}, ${b}, ${alpha})`
 }
 
