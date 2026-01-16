@@ -218,10 +218,10 @@ function App() {
       .replace(/\b\w/g, (letter) => letter.toUpperCase())
 
   return (
-    <div style={{ height: "100vh", padding: "32px 20px", background: "#fff", overflow: "hidden", boxSizing: "border-box" }}>
-      <div style={{ maxWidth: "980px", height: "100%", margin: "0 auto", display: "grid", gap: "24px" }}>
+    <div style={{ minHeight: "100vh", padding: "32px 20px", background: "#fff", boxSizing: "border-box" }}>
+      <div style={{ maxWidth: "980px", margin: "0 auto", display: "grid", gap: "24px" }}>
         <div>
-          <div style={{ height: "100%", overflowY: "auto" }}>
+          <div>
             {metricTables.map((table) => (
               <div key={table.title} className="d-flex justify-content-center" style={{ width: "100%" }}>
                 <table
