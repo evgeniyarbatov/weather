@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb'
 import { DynamoDBDocumentClient, ScanCommand } from '@aws-sdk/lib-dynamodb'
 import { fromCognitoIdentityPool } from '@aws-sdk/credential-provider-cognito-identity'
@@ -25,6 +25,7 @@ function App() {
   useEffect(() => {
     const fetchData = async () => {
       try {
+        // Pull the full table once, then sort newest-first by the timestamp field.
         const client = new DynamoDBClient({
           region,
           credentials: fromCognitoIdentityPool({
@@ -33,14 +34,16 @@ function App() {
           }),
         })
         const docClient = DynamoDBDocumentClient.from(client)
-        const command = new ScanCommand({ 
-          TableName: tableName
-        })
+        const command = new ScanCommand({ TableName: tableName })
         const result = await docClient.send(command)
         const fetchedItems = result.Items || []
 
-        const timestampField = getTimestampField(fetchedItems)
-        setItems(sortItemsByTimestamp(fetchedItems, timestampField))
+        setItems(
+          sortItemsByTimestamp(
+            fetchedItems,
+            getTimestampField(fetchedItems)
+          )
+        )
       } catch (err) {
         console.error('Error fetching data:', err)
         setError(err.message)
@@ -55,9 +58,8 @@ function App() {
   if (error) return <div>Error: {error}</div>
   if (items.length === 0) return <div>No data</div>
 
-  const timestampField = getTimestampField(items)
   const availableFields = new Set(Object.keys(items[0] || {}))
-  const timeField = timestampField || "timestamp"
+  const timeField = getTimestampField(items) || "timestamp"
 
   const fieldRanges = computeFieldRanges(items)
   const metricTables = buildMetricTables(availableFields)

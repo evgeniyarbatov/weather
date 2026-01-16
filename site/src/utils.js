@@ -1,26 +1,12 @@
 export const fieldLabels = {
   timestamp: "Time",
-  dt: "Unix Time",
-  hour_of_day: "Hour",
-  sys_sunrise: "Sunrise",
-  sys_sunset: "Sunset",
-  timezone: "Timezone",
-  name: "City",
-  sys_country: "Country",
-  coord_lat: "Lat",
-  coord_lon: "Lon",
   weather_0_description: "Description",
-  weather_0_icon: "Icon",
   main_temp: "Temperature",
   main_feels_like: "Feels Like",
-  main_temp_min: "Min Temp",
-  main_temp_max: "Max Temp",
   main_humidity: "Humidity",
   main_pressure: "Pressure",
   main_sea_level: "Sea Level",
-  main_grnd_level: "Ground Level",
   clouds_all: "Clouds",
-  visibility: "Visibility",
   wind_speed: "Wind Speed",
   wind_gust: "Wind Gust",
   wind_deg: "Wind Dir",
@@ -56,10 +42,17 @@ export const formatSummaryTime = (value) => {
   return `${displayHour}${ampm} / ${month} ${day}`
 }
 
+const windDirectionFromDegrees = (degrees) => {
+  const directions = ["N", "NE", "E", "SE", "S", "SW", "W", "NW"]
+  const index = Math.round(degrees / 45) % directions.length
+  return directions[index]
+}
+
 export const formatValue = (key, value) => {
   if (value === null || value === undefined) return ""
 
   if (key === "weather_0_description" && typeof value === "string") {
+    // Convert sentence-like strings to title case for readability.
     return value
       ? value
           .split(" ")
@@ -77,6 +70,7 @@ export const formatValue = (key, value) => {
   }
 
   if (!Number.isNaN(numberValue)) {
+    // Attach units based on field naming conventions.
     if (lowerKey.includes("temp") || lowerKey.includes("feels_like")) {
       return `${numberValue}°C`
     }
@@ -93,7 +87,9 @@ export const formatValue = (key, value) => {
     if (lowerKey.includes("wind_speed") || lowerKey.includes("wind_gust")) {
       return `${numberValue} m/s`
     }
-    if (lowerKey.includes("wind_deg")) return `${numberValue}°`
+    if (lowerKey.includes("wind_deg")) {
+      return windDirectionFromDegrees(numberValue)
+    }
     if (lowerKey.includes("visibility")) return `${numberValue} m`
     if (lowerKey.includes("lat") || lowerKey.includes("lon")) {
       return numberValue.toFixed(4)
@@ -106,6 +102,7 @@ export const formatValue = (key, value) => {
     lowerKey.includes("sunset") ||
     lowerKey === "dt"
   ) {
+    // DynamoDB may store seconds since epoch; convert to ms when needed.
     const dateValue =
       typeof value === "number" && value < 1e12 ? value * 1000 : value
     const date = new Date(dateValue)
@@ -156,6 +153,7 @@ export const getFieldColor = (field, value, fieldRanges) => {
     typeof window !== "undefined" &&
     window.matchMedia &&
     window.matchMedia("(prefers-color-scheme: dark)").matches
+  // Map the value into a subtle gradient between low/high values.
   const ratio =
     range.max === range.min
       ? 0.5
