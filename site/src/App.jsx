@@ -7,10 +7,13 @@ import {
   computeFieldRanges,
   formatSummaryTime,
   formatValue,
+  filterItemsByFieldChange,
+  filterItemsByRoundedChange,
   getFieldColor,
   getTimestampField,
   labelForField,
   sortItemsByTimestamp,
+  toTimestampMs,
 } from './utils'
 
 const region = __AWS_REGION__
@@ -60,6 +63,11 @@ function App() {
 
   const availableFields = new Set(Object.keys(items[0] || {}))
   const timeField = getTimestampField(items) || "timestamp"
+  const latestTimestamp = toTimestampMs(items[0][timeField])
+  const lastWindowThreshold = latestTimestamp - 12 * 60 * 60 * 1000
+  const lastWindowItems = items.filter(
+    (item) => toTimestampMs(item[timeField]) >= lastWindowThreshold
+  )
 
   const fieldRanges = computeFieldRanges(items)
   const metricTables = buildMetricTables(availableFields)
@@ -69,31 +77,25 @@ function App() {
       <div style={{ maxWidth: "980px", margin: "0 auto", display: "grid", gap: "24px" }}>
         <div>
           <div>
-            {metricTables.map((table) => (
-              <div key={table.title} className="d-flex justify-content-center" style={{ width: "100%" }}>
-                <table
-                  className="table text-center"
-                  style={{ borderCollapse: "collapse", marginBottom: "20px", background: "var(--surface)", width: "100%", fontSize: "13px" }}
-                >
-                  <thead>
-                    <tr>
-                    <th
-                      style={{
-                        border: "none",
-                        padding: "8px 12px",
-                        fontWeight: "600",
-                        color: "var(--text)",
-                        textAlign: "center",
-                        fontSize: "13px",
-                        width: "var(--time-col-width)",
-                        whiteSpace: "nowrap",
-                      }}
-                    >
-                      {labelForField(timeField)}
-                    </th>
-                      {table.fields.map((field) => (
+            {metricTables.map((table) => {
+              const field = table.fields[0]
+              const tableItems =
+                field === "main_humidity"
+                  ? filterItemsByRoundedChange(lastWindowItems, field, 10)
+                  : table.title === "Wind"
+                  ? lastWindowItems
+                  : field === "clouds_all" || field === "weather_0_description"
+                  ? filterItemsByFieldChange(items, field)
+                  : items
+              return (
+                <div key={table.title} className="d-flex justify-content-center" style={{ width: "100%" }}>
+                  <table
+                    className="table text-center"
+                    style={{ borderCollapse: "collapse", marginBottom: "20px", background: "var(--surface)", width: "100%", fontSize: "13px" }}
+                  >
+                    <thead>
+                      <tr>
                         <th
-                          key={`${table.title}-head-${field}`}
                           style={{
                             border: "none",
                             padding: "8px 12px",
@@ -101,48 +103,65 @@ function App() {
                             color: "var(--text)",
                             textAlign: "center",
                             fontSize: "13px",
+                            width: "var(--time-col-width)",
+                            whiteSpace: "nowrap",
                           }}
                         >
-                          {labelForField(field)}
+                          {labelForField(timeField)}
                         </th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {items.map((item, index) => (
-                      <tr key={`${table.title}-row-${index}`}>
-                      <td
-                        style={{
-                          border: "none",
-                          padding: "8px 12px",
-                          color: "var(--text)",
-                          fontSize: "13px",
-                          width: "var(--time-col-width)",
-                          whiteSpace: "nowrap",
-                        }}
-                      >
-                        {formatSummaryTime(item[timeField])}
-                      </td>
                         {table.fields.map((field) => (
+                          <th
+                            key={`${table.title}-head-${field}`}
+                            style={{
+                              border: "none",
+                              padding: "8px 12px",
+                              fontWeight: "600",
+                              color: "var(--text)",
+                              textAlign: "center",
+                              fontSize: "13px",
+                            }}
+                          >
+                            {labelForField(field)}
+                          </th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {tableItems.map((item, index) => (
+                        <tr key={`${table.title}-row-${index}`}>
                           <td
-                            key={`${table.title}-cell-${index}-${field}`}
                             style={{
                               border: "none",
                               padding: "8px 12px",
                               color: "var(--text)",
                               fontSize: "13px",
-                              backgroundColor: getFieldColor(field, item[field], fieldRanges),
+                              width: "var(--time-col-width)",
+                              whiteSpace: "nowrap",
                             }}
                           >
-                            {formatValue(field, item[field])}
+                            {formatSummaryTime(item[timeField])}
                           </td>
-                        ))}
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            ))}
+                          {table.fields.map((field) => (
+                            <td
+                              key={`${table.title}-cell-${index}-${field}`}
+                              style={{
+                                border: "none",
+                                padding: "8px 12px",
+                                color: "var(--text)",
+                                fontSize: "13px",
+                                backgroundColor: getFieldColor(field, item[field], fieldRanges),
+                              }}
+                            >
+                              {formatValue(field, item[field])}
+                            </td>
+                          ))}
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )
+            })}
           </div>
         </div>
       </div>

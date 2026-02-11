@@ -4,8 +4,6 @@ export const fieldLabels = {
   main_temp: "Temperature",
   main_feels_like: "Feels Like",
   main_humidity: "Humidity",
-  main_pressure: "Pressure",
-  main_sea_level: "Sea Level",
   clouds_all: "Clouds",
   wind_speed: "Wind Speed",
   wind_gust: "Wind Gust",
@@ -31,6 +29,11 @@ export const sortItemsByTimestamp = (items, timestampField) => {
     return bTime - aTime
   })
 }
+
+export const toTimestampMs = (value) =>
+  typeof value === "number" && value < 1e12
+    ? value * 1000
+    : new Date(value).getTime()
 
 export const formatSummaryTime = (value) => {
   const date = new Date(value)
@@ -76,13 +79,6 @@ export const formatValue = (key, value) => {
     }
     if (lowerKey.includes("humidity") || lowerKey.includes("cloud")) {
       return `${numberValue}%`
-    }
-    if (
-      lowerKey.includes("pressure") ||
-      lowerKey.includes("sea_level") ||
-      lowerKey.includes("grnd_level")
-    ) {
-      return `${numberValue} hPa`
     }
     if (lowerKey.includes("wind_speed") || lowerKey.includes("wind_gust")) {
       return `${numberValue} m/s`
@@ -173,12 +169,11 @@ export const getFieldColor = (field, value, fieldRanges) => {
 
 export const buildMetricTables = (availableFields) =>
   [
+    { title: "Weather", fields: ["weather_0_description"] },
     { title: "Temperature", fields: ["main_temp", "main_feels_like"] },
     { title: "Clouds", fields: ["clouds_all"] },
     { title: "Wind", fields: ["wind_speed", "wind_gust", "wind_deg"] },
-    { title: "Pressure", fields: ["main_pressure", "main_sea_level"] },
     { title: "Humidity", fields: ["main_humidity"] },
-    { title: "Weather", fields: ["weather_0_description"] },
   ]
     .map((table) => ({
       ...table,
@@ -191,3 +186,17 @@ export const labelForField = (field, labels = fieldLabels) =>
   field
     .replace(/_/g, " ")
     .replace(/\b\w/g, (letter) => letter.toUpperCase())
+
+export const filterItemsByFieldChange = (items, field) =>
+  items.filter(
+    (item, index) => index === 0 || item[field] !== items[index - 1][field]
+  )
+
+export const filterItemsByRoundedChange = (items, field, roundTo) =>
+  items.filter((item, index) => {
+    if (index === 0) return true
+    const currentRounded = Math.floor(Number(item[field]) / roundTo) * roundTo
+    const previousRounded =
+      Math.floor(Number(items[index - 1][field]) / roundTo) * roundTo
+    return currentRounded !== previousRounded
+  })
