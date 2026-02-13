@@ -1,6 +1,5 @@
 export const fieldLabels = {
   timestamp: "Time",
-  weather_0_description: "Description",
   main_temp: "Temperature",
   main_feels_like: "Feels Like",
   main_humidity: "Humidity",
@@ -53,16 +52,6 @@ const windDirectionFromDegrees = (degrees) => {
 
 export const formatValue = (key, value) => {
   if (value === null || value === undefined) return ""
-
-  if (key === "weather_0_description" && typeof value === "string") {
-    // Convert sentence-like strings to title case for readability.
-    return value
-      ? value
-          .split(" ")
-          .map((word) => (word ? word[0].toUpperCase() + word.slice(1) : word))
-          .join(" ")
-      : value
-  }
 
   const lowerKey = key.toLowerCase()
   const numberValue = typeof value === "number" ? value : Number(value)
@@ -169,7 +158,6 @@ export const getFieldColor = (field, value, fieldRanges) => {
 
 export const buildMetricTables = (availableFields) =>
   [
-    { title: "Weather", fields: ["weather_0_description"] },
     { title: "Temperature", fields: ["main_temp", "main_feels_like"] },
     { title: "Clouds", fields: ["clouds_all"] },
     { title: "Wind", fields: ["wind_speed", "wind_gust", "wind_deg"] },

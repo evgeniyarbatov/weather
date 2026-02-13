@@ -84,7 +84,7 @@ function App() {
                   ? filterItemsByRoundedChange(lastWindowItems, field, 10)
                   : table.title === "Wind"
                   ? lastWindowItems
-                  : field === "clouds_all" || field === "weather_0_description"
+                  : field === "clouds_all"
                   ? filterItemsByFieldChange(items, field)
                   : items
               return (
