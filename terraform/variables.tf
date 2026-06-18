@@ -30,11 +30,11 @@ variable "table_name" {
 variable "latitude" {
   description = "Latitude for weather data collection"
   type        = number
-  default     = 20.99483373149584
+  default     = 10.790183118813982
 }
 
 variable "longitude" {
   description = "Longitude for weather data collection"
   type        = number
-  default     = 105.86793291224949
+  default     = 106.68837894691994
 }
