@@ -138,22 +138,18 @@ export const getFieldColor = (field, value, fieldRanges) => {
     typeof window !== "undefined" &&
     window.matchMedia &&
     window.matchMedia("(prefers-color-scheme: dark)").matches
+  if (isDarkMode) return "transparent"
   // Map the value into a subtle gradient between low/high values.
   const ratio =
     range.max === range.min
       ? 0.5
       : (numberValue - range.min) / (range.max - range.min)
-  const start = isDarkMode
-    ? { r: 58, g: 70, b: 96 }
-    : { r: 246, g: 248, b: 255 }
-  const end = isDarkMode
-    ? { r: 156, g: 110, b: 92 }
-    : { r: 255, g: 232, b: 210 }
+  const start = { r: 246, g: 248, b: 255 }
+  const end = { r: 255, g: 232, b: 210 }
   const r = Math.round(start.r * (1 - ratio) + end.r * ratio)
   const g = Math.round(start.g * (1 - ratio) + end.g * ratio)
   const b = Math.round(start.b * (1 - ratio) + end.b * ratio)
-  const alpha = isDarkMode ? 0.9 : 0.6
-  return `rgba(${r}, ${g}, ${b}, ${alpha})`
+  return `rgba(${r}, ${g}, ${b}, 0.6)`
 }
 
 export const buildMetricTables = (availableFields) =>
