@@ -74,4 +74,3 @@ resource "aws_cognito_identity_pool" "weather_identity_pool" {
   identity_pool_name               = "${var.function_name}-identity-pool"
   allow_unauthenticated_identities = true
 }
-
