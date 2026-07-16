@@ -2,6 +2,7 @@ import json
 import os
 from datetime import datetime, timedelta
 from decimal import Decimal
+from typing import Any
 from urllib.parse import urlencode
 from zoneinfo import ZoneInfo
 
@@ -12,7 +13,7 @@ API_KEY = "***REMOVED***"
 BASE_URL = "https://api.openweathermap.org/data/2.5/weather"
 
 
-def call_api(url, lat, lon):
+def call_api(url: str, lat: float, lon: float) -> str | None:
     params = {
         "lat": lat,
         "lon": lon,
@@ -32,8 +33,8 @@ def call_api(url, lat, lon):
         return None
 
 
-def flatten(data, parent_key=""):
-    flat = {}
+def flatten(data: dict[str, Any], parent_key: str = "") -> dict[str, Any]:
+    flat: dict[str, Any] = {}
     for key, value in data.items():
         new_key = f"{parent_key}_{key}" if parent_key else key
         if isinstance(value, dict):
@@ -50,17 +51,17 @@ def flatten(data, parent_key=""):
     return flat
 
 
-def to_dynamo(value):
+def to_dynamo(value: Any) -> Any:
     if value is None:
         return None
     if isinstance(value, bool):
         return value
-    if isinstance(value, (int, float)):
+    if isinstance(value, int | float):
         return Decimal(str(value))
     return value
 
 
-def lambda_handler(event, context):
+def lambda_handler(event: Any, context: Any) -> dict[str, Any]:
     dynamodb = boto3.resource("dynamodb")
     table = dynamodb.Table(os.environ["DYNAMODB_TABLE"])
 
