@@ -3,6 +3,9 @@ TERRAFORM_DIR = terraform
 
 all: deploy
 
+install:
+	cd $(SITE_DIR) && npm install
+
 env:
 	cd $(TERRAFORM_DIR) && \
 	AWS_REGION=$$(terraform output -raw aws_region) && \
@@ -13,9 +16,23 @@ env:
 run:
 	cd $(SITE_DIR) && npm run dev
 
-test:
+test: install
 	cd $(SITE_DIR) && npm test
 
-deploy: test
+screenshots: install
+	cd $(SITE_DIR) && npm run test:screenshots
+
+deploy: test screenshots
 	cd $(SITE_DIR) && npm run build
 	cd $(TERRAFORM_DIR) && terraform apply -auto-approve
+
+help:
+	@echo "install     - npm install in site/"
+	@echo "env         - write site/.env from terraform outputs"
+	@echo "run         - run site dev server"
+	@echo "test        - run site unit test suite"
+	@echo "screenshots - capture Playwright screenshots (needs browser deps)"
+	@echo "deploy      - test, screenshots, build, and apply terraform"
+	@echo "all         - alias for deploy"
+
+.PHONY: run help env screenshots

@@ -8,7 +8,8 @@
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "test": "node --test"
+    "test": "node --test tests/utils.test.js",
+    "test:screenshots": "node --test tests/screenshots.test.js"
   },
   "dependencies": {
     "@aws-sdk/client-dynamodb": "^3.868.0",
