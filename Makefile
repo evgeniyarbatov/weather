@@ -1,8 +1,6 @@
 SITE_DIR = site
 TERRAFORM_DIR = terraform
 
-all: deploy
-
 install:
 	cd $(SITE_DIR) && npm install
 
@@ -22,9 +20,11 @@ test: install
 screenshots: install
 	cd $(SITE_DIR) && npm run test:screenshots
 
-deploy: test screenshots
+build: install
 	cd $(SITE_DIR) && npm run build
-	cd $(TERRAFORM_DIR) && terraform apply -auto-approve
+
+apply:
+	cd $(TERRAFORM_DIR) && terraform init -input=false && terraform apply -input=false -auto-approve
 
 help:
 	@echo "install     - npm install in site/"
@@ -32,7 +32,7 @@ help:
 	@echo "run         - run site dev server"
 	@echo "test        - run site unit test suite"
 	@echo "screenshots - capture Playwright screenshots (needs browser deps)"
-	@echo "deploy      - test, screenshots, build, and apply terraform"
-	@echo "all         - alias for deploy"
+	@echo "build       - build site into site/dist"
+	@echo "apply       - terraform init + apply (needs TF_VAR_owm_api_key; CI runs this on push to main)"
 
-.PHONY: run help env screenshots
+.PHONY: install env run test screenshots build apply help

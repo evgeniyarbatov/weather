@@ -19,6 +19,7 @@ resource "aws_lambda_function" "weather_collector" {
       DYNAMODB_TABLE = var.table_name
       LATITUDE       = var.latitude
       LONGITUDE      = var.longitude
+      OWM_API_KEY    = var.owm_api_key
     }
   }
 

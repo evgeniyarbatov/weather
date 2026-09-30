@@ -5,6 +5,7 @@ export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '')
 
   return {
+    base: '/weather/',
     define: {
       __AWS_REGION__: JSON.stringify(env.VITE_AWS_REGION),
       __TABLE_NAME__: JSON.stringify(env.VITE_TABLE_NAME),

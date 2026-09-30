@@ -9,7 +9,7 @@ from zoneinfo import ZoneInfo
 import boto3
 import urllib3
 
-API_KEY = "***REMOVED***"
+API_KEY = os.environ["OWM_API_KEY"]
 BASE_URL = "https://api.openweathermap.org/data/2.5/weather"
 
 
