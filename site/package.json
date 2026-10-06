@@ -15,7 +15,7 @@
     "@aws-sdk/client-dynamodb": "^3.868.0",
     "@aws-sdk/credential-provider-cognito-identity": "^3.864.0",
     "@aws-sdk/lib-dynamodb": "^3.868.0",
-    "aws-sdk": "^1.18.0",
+    "aws-sdk": "^2.1693.0",
     "bootstrap": "^5.3.7",
     "lucide-react": "^0.539.0",
     "react": "^19.1.1",
