@@ -4,12 +4,6 @@ Collecting temperature and cloud cover for a given location. Minimal static site
 
 Live at https://evgeniyarbatov.github.io/weather/
 
-## Status
-
-| Folder | Status | Last touched | Next step |
-|---|---|---|---|
-| root | active | 2026-10-02 | — |
-
 ## How it works
 
 A scheduled Lambda function fetches current weather from OpenWeatherMap and stores it in DynamoDB. A static site, hosted on GitHub Pages, reads the table directly from the browser via a Cognito identity pool and displays it.
