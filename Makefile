@@ -1,7 +1,9 @@
 SITE_DIR = site
 TERRAFORM_DIR = terraform
 
-install:
+.DEFAULT_GOAL := help
+
+setup:
 	cd $(SITE_DIR) && npm install
 
 env:
@@ -14,20 +16,20 @@ env:
 run:
 	cd $(SITE_DIR) && npm run dev
 
-test: install
+test: setup
 	cd $(SITE_DIR) && npm test
 
-screenshots: install
+screenshots: setup
 	cd $(SITE_DIR) && npm run test:screenshots
 
-build: install
+build: setup
 	cd $(SITE_DIR) && npm run build
 
 apply:
 	cd $(TERRAFORM_DIR) && terraform init -input=false && terraform apply -input=false -auto-approve
 
 help:
-	@echo "install     - npm install in site/"
+	@echo "setup       - npm install in site/"
 	@echo "env         - write site/.env from terraform outputs"
 	@echo "run         - run site dev server"
 	@echo "test        - run site unit test suite"
@@ -35,4 +37,4 @@ help:
 	@echo "build       - build site into site/dist"
 	@echo "apply       - terraform init + apply (needs TF_VAR_owm_api_key; CI runs this on push to main)"
 
-.PHONY: install env run test screenshots build apply help
+.PHONY: setup env run test screenshots build apply help
