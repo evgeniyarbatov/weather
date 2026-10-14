@@ -23,7 +23,12 @@ export default defineConfig([
     ],
     languageOptions: {
       ecmaVersion: 2020,
-      globals: globals.browser,
+      globals: {
+        ...globals.browser,
+        __AWS_REGION__: 'readonly',
+        __TABLE_NAME__: 'readonly',
+        __COGNITO_IDENTITY_POOL_ID__: 'readonly',
+      },
       parserOptions: {
         ecmaVersion: 'latest',
         ecmaFeatures: { jsx: true },
